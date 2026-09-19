@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>UNDERSTAR</title>
+
+    <style>
+        .rules-modal {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 10000;
+
+    background:rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+}
+
+.rules-modal.active {
+    display: flex;
+}
+
+.rules-content {
+    position: relative;
+
+    width: 850px;
+    max-width: 95%;
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    padding: 40px;
+
+    background: rgba(5, 12, 22, 0.98);
+
+    border: 2px solid #4da6ff;
+    border-radius: 15px;
+
+    box-shadow:
+        0 0 10px #4da6ff,
+        0 0 30px rgba(77, 166, 255, 0.5);
+}
+
+.rules-content h1 {
+    text-align: center;
+    color: #8cc8ff;
+    margin-bottom: 30px;
+
+    text-shadow:
+        0 0 5px #4da6ff,
+        0 0 15px #4da6ff;
+}
+
+.rules-close {
+    position: absolute;
+
+    top: 15px;
+    right: 20px;
+
+    background: transparent;
+    border: none;
+
+    color: white;
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.rules-close:hover {
+    color: #4da6ff;
+
+    text-shadow:
+        0 0 10px #4da6ff;
+}
+
+.rule-item {
+    padding: 20px;
+    margin-bottom: 15px;
+
+    background: rgba(30, 50, 75, 0.5);
+
+    border-left: 3px solid #4da6ff;
+    border-radius: 8px;
+}
+
+.rule-item h2 {
+    color: #8cc8ff;
+    margin-top: 0;
+}
+
+.rule-item p {
+    color: #ddd;
+    line-height: 1.6;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #080808;
+            color: white;
+        }
+
+        /* ===== THANH MENU ===== */
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #0f76c0;
+        }
+
+        .logo span {
+            color: rgb(51, 223, 206);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ff3333;
+        }
+
+        /* ===== BANNER ===== */
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 50px;
+
+            background:
+                linear-gradient(
+                    rgba(0,0,0,0.65),
+                    rgba(0,0,0,0.9)
+                ),
+                url("https://cdn.discordapp.com/attachments/1454124319004168281/1550864145262317649/Gemini_Generated_Image_aneon3aneon3aneo.png?ex=6aafe249&is=6aae90c9&hm=2820a977110c4a09cf8d07258e620da0325fdef2af8fdc941cbb8f8679038e26&");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: clamp(45px, 8vw, 90px);
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 3px;
+           text-shadow:
+    0 0 10px #008cff,
+    0 0 25px #008cff,
+    0 0 50px #0066cc;
+        }
+
+        .hero h1 span {
+            color: #ff3333;
+        }
+
+        .hero p {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #cccccc;
+        }
+
+        .buttons {
+            margin-top: 35px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-main {
+            background: #ff3333;
+            color: white;
+        }
+
+        .btn-main:hover {
+            background: #cc2222;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,0,0,0.3);
+        }
+
+        .btn-discord {
+            background: #5865F2;
+            color: white;
+        }
+
+        .btn-discord:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(88,101,242,0.4);
+        }
+
+        /* ===== THỐNG KÊ ===== */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: #111;
+            padding: 35px 10%;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .stat h2 {
+            color: #ff3333;
+            font-size: 35px;
+        }
+
+        .stat p {
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        /* ===== SECTION ===== */
+
+        section {
+            padding: 90px 10%;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .title h2 {
+            font-size: 40px;
+            text-transform: uppercase;
+        }
+
+        .title p {
+            color: #888;
+            margin-top: 10px;
+        }
+
+        /* ===== TÍNH NĂNG ===== */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .card {
+            background: #111;
+            padding: 35px 25px;
+            border-radius: 12px;
+            border: 1px solid #222;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #ff3333;
+            box-shadow: 0 15px 40px rgba(255,0,0,0.12);
+        }
+
+        .card .icon {
+            font-size: 45px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #999;
+            line-height: 1.6;
+        }
+
+        /* ===== GIỚI THIỆU ===== */
+
+        .about {
+            background: #0d0d0d;
+        }
+
+        .about-content {
+            max-width: 900px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .about-content p {
+            color: #aaa;
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        /* ===== CÁCH CHƠI ===== */
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .step {
+            text-align: center;
+            padding: 30px;
+            background: #2d5f4e;
+            border-radius: 10px;
+        }
+
+        .number {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: #b11818;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .step p {
+            color: #999;
+            margin-top: 10px;
+        }
+
+        /* ===== CTA ===== */
+
+        .cta {
+            text-align: center;
+            background:
+                linear-gradient(
+                    rgba(100,0,0,0.35),
+                    rgba(0,0,0,0.8)
+                ),
+                url("https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=2000&q=80");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cta h2 {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .cta p {
+            color: #ccc;
+            margin-bottom: 30px;
+        }
+
+        /* ===== FOOTER ===== */
+
+        footer {
+            background: #080c0c;
+            text-align: center;
+            padding: 30px;
+            color: #0e1313;
+        }
+
+        footer span {
+            color: #1a1515;
+        }
+
+        /* ===== MOBILE ===== */
+
+        @media (max-width: 800px) {
+
+            nav {
+                padding: 0 20px;
+            }
+
+            nav ul {
+                display: none;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 70px 6%;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .cta h2 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ===== MENU ===== -->
+
+<nav>
+
+    <div class="logo">
+        UNDERSTAR <span>ROLEPLAY</span>
+    </div>
+
+    <ul>
+        <li><a href="#home">Trang chủ</a></li>
+        <li><a href="#features">Tính năng</a></li>
+        <li><a href="#about">Giới thiệu</a></li>
+    <li><a href="#" id="btnRules">Luật</a></li>
+        <li><a href="#join">Tham gia</a></li>
+    </ul> 
+
+</nav>
+
+
+<!-- ===== HERO ===== -->
+
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <div class="brand-title">
+    <span class="brand-main">UNDERSTAR</span>
+    <span class="brand-sub">ROLEPLAY</span>
+</div>
+
+<p class="hero-slogan">
+    Thành phố của bạn – câu chuyện của bạn.
+    Hãy bước vào UNDERSTAR và bắt đầu hành trình của riêng mình.
+</p>
+
+        <div class="buttons">
+
+            <a class="btn btn-main"
+               href="#join">
+                🎮 Tải Laucher tại đây
+            </a
+
+             class="btn btn-discord"
+    href=""
+    target="_blank">
+
+    <a class="btn btn-discord"
+        href="https://discord.gg/understar"
+        target="_blank">
+        💬 DISCORD
+    </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===== STATS ===== -->
+
+<div class="stats">
+
+    <div class="stat">
+        <h2>100+</h2>
+        <p>Người chơi</p>
+    </div>
+
+    <div class="stat">
+        <h2>24/7</h2>
+        <p>Thời gian hoạt động</p>
+    </div>
+
+    <div class="stat">
+        <h2>50+</h2>
+        <p>Hoạt động & nghề nghiệp</p>
+    </div>
+
+</div>
+
+
+<!-- ===== FEATURES ===== -->
+
+<section id="features">
+
+    <div class="title">
+
+        <h2>Tại sao chọn chúng tôi?</h2>
+
+        <p>
+            Một thế giới GTA RP được xây dựng dành cho cộng đồng.
+        </p>
+
+    </div>
+
+
+    <div class="features">
+
+        <div class="card">
+
+            <div class="icon">👮</div>
+
+            <h3>CẢNH SÁT</h3>
+
+            <p>
+                Tham gia lực lượng cảnh sát,
+                bảo vệ thành phố và truy bắt tội phạm.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🚑</div>
+
+            <h3>EMS</h3>
+
+            <p>
+                Trở thành bác sĩ,
+                cứu người và xử lý các tình huống khẩn cấp.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🔧</div>
+
+            <h3>MECHANIC</h3>
+
+            <p>
+                Sửa chữa, nâng cấp và kinh doanh
+                những chiếc xe trong thành phố.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">💰</div>
+
+            <h3>KINH TẾ</h3>
+
+            <p>
+                Làm việc, kiếm tiền, mua nhà,
+                sở hữu xe và xây dựng cuộc sống riêng.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🚗</div>
+
+            <h3>XE CỘ</h3>
+
+            <p>
+                Hệ thống phương tiện đa dạng
+                dành cho mọi phong cách chơi.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🔥</div>
+
+            <h3>GANG & CRIME</h3>
+
+            <p>
+                Thành lập tổ chức,
+                tranh giành địa bàn và tạo nên những câu chuyện riêng.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===== ABOUT ===== -->
+
+<section class="about" id="about">
+
+    <div class="title">
+
+        <h2>Về server</h2>
+
+    </div>
+
+    <div class="about-content">
+
+        <p>
+            UNDERSTAR ROLEPLAy là một máy chủ GTA RP được xây dựng
+            với mục tiêu tạo ra một thành phố sống động và có chiều sâu.
+            Tại đây, mỗi người chơi đều có thể lựa chọn con đường riêng:
+            trở thành cảnh sát, bác sĩ, thợ sửa xe, doanh nhân,
+            hoặc bước vào thế giới ngầm.
+        </p>
+
+        <br>
+
+        <p>
+            Hãy tạo nhân vật của bạn, gặp gỡ những người chơi khác
+            và viết nên câu chuyện của chính mình tại UNDERSTAR.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===== HOW TO JOIN ===== -->
+
+<section>
+
+    <div class="title">
+
+        <h2>Cách tham gia</h2>
+
+        <p>
+            Chỉ mất vài phút để bắt đầu.
+        </p>
+
+    </div>
+
+
+    <div class="steps">
+
+        <div class="step">
+
+            <div class="number">1</div>
+
+            <h3>Tham gia Discord</h3>
+
+            <p>
+                Vào Discord của server để nhận thông tin
+                và hướng dẫn.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="number">2</div>
+
+            <h3>Đọc luật</h3>
+
+            <p>
+                Tìm hiểu luật RP và các quy định
+                của thành phố.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="number">3</div>
+
+            <h3>Vào thành phố</h3>
+
+            <p>
+                Tạo nhân vật và bắt đầu hành trình
+                của bạn tại UNDERSTAR.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===== CTA ===== -->
+
+<section class="cta" id="join">
+
+    <h2>SẴN SÀNG BƯỚC VÀO UNDERSTAR ?</h2>
+
+    <p>
+        Thành phố đang chờ bạn.
+    </p>
+
+    <div class="buttons">
+
+        <a class="btn btn-main"
+           href="
+https://raw.githubusercontent.com/TimsComunity/GTAVNRP/main/GTAVNRP-Main.exe">
+            🎮 Tải Laucher tại đây
+        </a>
+
+        <a class="btn btn-discord"
+           href="https://discord.gg/understar"
+           target="_blank">
+            💬 THAM GIA DISCORD
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ===== FOOTER ===== -->
+
+<footer>
+
+    © 2026
+    <span>UNDERSTAR</span>
+    —
+    All Rights Reserved.
+
+</footer>
+
+    
+
+    <div class="led-border"></div>
+
+    <style>/* ===== LOGO UNDERSTAR HIỆN ĐẠI ===== */
+
+.brand-title {
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+    letter-spacing: 3px;
+}
+
+.brand-main {
+    display: block;
+    font-size: 76px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 8px;
+
+    text-shadow:
+        0 0 5px rgba(255,255,255,0.9),
+        0 0 15px rgba(0,200,255,0.8),
+        0 0 35px rgba(0,180,255,0.5);
+
+    line-height: 1;
+}
+
+.brand-sub {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 5px 25px;
+
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 12px;
+
+    color: #00e5ff;
+
+    border-top: 1px solid rgba(0,229,255,0.5);
+    border-bottom: 1px solid rgba(0,229,255,0.5);
+
+    text-shadow:
+        0 0 10px rgba(0,229,255,0.8),
+        0 0 25px rgba(0,180,255,0.5);
+}
+
+.hero-slogan {
+    max-width: 850px;
+    margin: 25px auto 0;
+    text-align: center;
+
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.5px;
+}
+        .led-border {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+
+            border: 2px solid transparent;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    #4da6ff 20%,
+                    #8cc8ff 50%,
+                    #4da6ff 80%,
+                    transparent 100%
+                ) top / 200% 2px no-repeat,
+
+                linear-gradient(
+                    0deg,
+                    transparent 0%,
+                    #4da6ff 20%,
+                    #8cc8ff 50%,
+                    #4da6ff 80%,
+                    transparent 100%
+                ) right / 2px 200% no-repeat,
+
+                linear-gradient(
+                    90deg,
+                    transparent 0%,
+                    #4da6ff 20%,
+                    #8cc8ff 50%,
+                    #4da6ff 80%,
+                    transparent 100%
+                ) bottom / 200% 2px no-repeat,
+
+                linear-gradient(
+                    0deg,
+                    transparent 0%,
+                    #4da6ff 20%,
+                    #8cc8ff 50%,
+                    #4da6ff 80%,
+                    transparent 100%
+                ) left / 2px 200% no-repeat;
+
+            filter:
+                drop-shadow(0 0 4px #4da6ff)
+                drop-shadow(0 0 10px rgba(77, 166, 255, 0.5));
+
+            animation: ledRun 3s linear infinite;
+        }
+
+        @keyframes ledRun {
+            0% {
+                background-position:
+                    200% 0,
+                    100% 200%,
+                    -200% 100%,
+                    0 -200%;
+            }
+
+            100% {
+                background-position:
+                    -200% 0,
+                    100% -200%,
+                    200% 100%,
+                    0 200%;
+            }
+        }
+    </style>
+
+<div id="rulesModal" class="rules-modal">
+
+    <div class="rules-content">
+
+        <button id="closeRules" class="rules-close">✕</button>
+
+        <h1>📜 LUẬT UNDERSTAR ROLEPLAY</h1>
+
+        <div class="rule-item">
+            <h2>1. Luật Roleplay</h2>
+            <p>
+                Người chơi phải luôn giữ đúng vai trò của nhân vật
+                và không phá vỡ trải nghiệm Roleplay.
+            </p>
+        </div>
+
+        <div class="rule-item">
+            <h2>2. Không Deathmatch</h2>
+            <p>
+                Không được tấn công hoặc hạ người chơi khác
+                nếu không có lý do Roleplay hợp lý.
+            </p>
+        </div>
+
+        <div class="rule-item">
+            <h2>3. Không Random Deathmatch</h2>
+            <p>
+                Không được giết người chơi một cách ngẫu nhiên
+                hoặc không có tình huống Roleplay.
+            </p>
+        </div>
+
+        <div class="rule-item">
+            <h2>4. Tôn trọng cộng đồng</h2>
+            <p>
+                Không xúc phạm, gây war hoặc có hành vi làm ảnh hưởng
+                đến cộng đồng UNDERSTAR.
+            </p>
+        </div>
+
+        <div class="rule-item">
+            <h2>5. Tuân thủ quản trị viên</h2>
+            <p>
+                Người chơi cần tuân thủ quyết định của đội ngũ quản trị viên.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const btnRules = document.getElementById("btnRules");
+const rulesModal = document.getElementById("rulesModal");
+const closeRules = document.getElementById("closeRules");
+
+btnRules.addEventListener("click", function(event) {
+    event.preventDefault();
+    rulesModal.classList.add("active");
+});
+
+closeRules.addEventListener("click", function() {
+    rulesModal.classList.remove("active");
+});
+
+rulesModal.addEventListener("click", function(event) {
+    if (event.target === rulesModal) {
+        rulesModal.classList.remove("active");
+    }
+});
+</script>
+
+</body>
+</html>
